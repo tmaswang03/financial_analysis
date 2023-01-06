@@ -1,0 +1,27 @@
+:root {
+    --col0: #91F2E9;
+    --col1: #41BFB3;
+    --col2: #2A8C82;
+    --col3: #275950;
+    --col4: #260101; 
+}
+
+body{
+    background-color: var(--col3);
+}
+
+* {
+    font-family: 'Sen', sans-serif;
+}
+.searchBar{
+    border: 1px solid lightgray; 
+    background-color: white; 
+    height: 2rem; width: 20rem; 
+    border-radius: 0.2rem; 
+    padding: 0.3rem; 
+    text-align: center; 
+}
+
+.searchBar:focus{
+    outline: 2px solid lightgray;
+}
