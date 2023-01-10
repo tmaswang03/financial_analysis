@@ -1,7 +1,5 @@
 __pycache__/
 venv/
-package-lock.json
-package.json
 node_modules/
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

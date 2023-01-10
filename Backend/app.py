@@ -1,0 +1,43 @@
+from flask import *
+from flask_cors import CORS
+import json, time
+import yfinance as yf, pandas as pd, shutil, os, time, glob, smtplib, ssl
+
+shutil.rmtree("C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\")
+os.mkdir("C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\")
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/stock/', methods = ['GET'])
+def request_page(): 
+    stock = str(request.args.get('tick')) 
+    completed, count, days = 0, 0, 10
+    while(completed == 0 and count <= 5):  
+        try: 
+            tmp = yf.Ticker(stock)
+            hist_data = tmp.history(period="max")
+            hist_data.to_csv("C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\"+stock+".csv")
+            completed = 1
+        except: 
+            count += 1
+    if(completed == 0): 
+        return "Invalid input", 400
+    file = "C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\"+stock+".csv"
+    OBV_val = 0
+    tmpData = pd.read_csv(file)
+    pos_vals, neg_vals = [], [] 
+    for cnt in range(days): 
+        if tmpData.iloc[cnt, 1] < tmpData.iloc[cnt, 4]: #this means closing > opening, pos obv
+            pos_vals.append(cnt)
+        else:
+             neg_vals.append(cnt)
+    for cnt in pos_vals: 
+        OBV_val = round(OBV_val + 100*(tmpData.iloc[cnt, 5] / tmpData.iloc[cnt, 1]))
+    for cnt in neg_vals: 
+        OBV_val = round(OBV_val - 100*(tmpData.iloc[cnt, 5] / tmpData.iloc[cnt, 1]))
+    return json.dumps(OBV_val)
+
+if __name__ == "__main__": 
+    app.run(debug = True)
+
