@@ -2,3 +2,5 @@ yfinance
 pandas
 flask_cors
 flask
+plotly
+kaleido

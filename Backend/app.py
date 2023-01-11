@@ -2,6 +2,9 @@ from flask import *
 from flask_cors import CORS
 import json, time
 import yfinance as yf, pandas as pd, shutil, os, time, glob, smtplib, ssl
+import kaleido
+import plotly
+import plotly.graph_objs as go
 
 shutil.rmtree("C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\")
 os.mkdir("C:\\Users\\thoma\\OneDrive\\Documents\\GitHub\\financial_analysis\\Backend\\Daily_Stock_Report\\Stocks\\")
@@ -36,7 +39,14 @@ def request_page():
         OBV_val = round(OBV_val + 100*(tmpData.iloc[cnt, 5] / tmpData.iloc[cnt, 1]))
     for cnt in neg_vals: 
         OBV_val = round(OBV_val - 100*(tmpData.iloc[cnt, 5] / tmpData.iloc[cnt, 1]))
-    return json.dumps(OBV_val)
+    data = yf.download(tickers = stock, period = '10d', interval = '1h', rounding = True)
+    fig = go.Figure()
+    fig.add_trace(go.Candlestick())
+    fig.add_trace(go.Candlestick(x = data.index, open = data['Open'], high=data['High'], low = data['Low'], close = data['Close'], name = 'market data'))
+    fig.update_layout(title = str(stock) + ' Share Price', yaxis_title = 'Stock Price USD')
+    graphJSON = plotly.io.to_json(fig, pretty = True)
+    # return graphJSON
+    return jsonify(OBV = OBV_val, graph = graphJSON)
 
 if __name__ == "__main__": 
     app.run(debug = True)

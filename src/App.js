@@ -2,19 +2,24 @@
 import React from 'react';
 import './App.css'
 import {useEffect, useState} from 'react';
+import Plot from 'react-plotly.js';
 
 
 function App() {
-  const [data, setData] = useState();
+  const [OBV, setOBV] = useState();
+  const[plot, setPlot] = useState(0);
   
   const sub = (event) => {
     event.preventDefault()
     var tick = event.target.searchBar.value
-    // console.log(tick)
-    fetch("/stock/?tick="+tick)
-    // fetch("/stock/?tick=" + tick).then( res => {
-    //   return res.json()
-    // }).then(data => console.log(data))
+    fetch("/stock/?tick=" + tick).then( res => {
+      return res.json()
+    }).then(data => {
+      setPlot(data["graph"])
+      setOBV(data["OBV"])
+      console.log(OBV)
+      console.log(plot)
+    })
     return 
   }
   return (
