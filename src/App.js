@@ -7,7 +7,7 @@ import Plot from 'react-plotly.js';
 
 function App() {
   const [OBV, setOBV] = useState();
-  const[plot, setPlot] = useState(0);
+  const[graph, setGraph] = useState(0);
   
   const sub = (event) => {
     event.preventDefault()
@@ -15,10 +15,12 @@ function App() {
     fetch("/stock/?tick=" + tick).then( res => {
       return res.json()
     }).then(data => {
-      setPlot(data["graph"])
+      console.log(data)
+      setGraph(JSON.parse(data["graph"]))
       setOBV(data["OBV"])
-      console.log(OBV)
-      console.log(plot)
+      console.log(graph)
+      // graph.layout["plot_bgcolor"] = "black"
+      // graph.layout.bgcolor = "black"
     })
     return 
   }
@@ -27,7 +29,9 @@ function App() {
       <h2 style= {{color: "white", fontWeight: "200"}}>Stock Analysis OBV Indicator</h2>
       <form action = "/cgi-bin/main.py" method = "get" onSubmit = {sub}>
         <input type = "text" placeholder = "Enter Stock Here" className = "searchBar" name = "searchBar"/>
-      </form>
+      </form> 
+      {/* <{graph ? <Plot data = {graph.data} layout = {graph.layout}/> : null}> */}
+      {graph ? <Plot style = {{ margin: "1em"}} data = {graph.data} layout = {graph.layout} /> : null}
     </div>
   );
 }
